@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empire Pro — Free Creator Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap');
+
+:root{
+  --bg:#030307;--s1:#07070f;--s2:#0c0c18;--card:#0e0e1a;--card2:#12121f;
+  --b1:#161628;--b2:#1e1e35;--b3:#262645;
+  --txt:#f0f0fa;--sub:#8888aa;--dim:#3a3a5a;
+  --gold:#f0b429;--gold2:#d4870a;
+  --grn:#10e09a;--grn2:#0aaa72;
+  --blu:#4080ff;--blu2:#1a55ee;
+  --pur:#9955ff;--pur2:#7733dd;
+  --red:#ff3355;--red2:#cc1133;
+  --cyn:#00ccff;--pnk:#ff55aa;
+  --org:#ff7722;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Geist',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* noise grain */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* bg radials */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 600px 400px at 0% 0%,rgba(64,128,255,.06) 0,transparent 70%),
+    radial-gradient(ellipse 500px 300px at 100% 100%,rgba(153,85,255,.05) 0,transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 50%,rgba(240,180,41,.03) 0,transparent 70%)}
+
+.z{position:relative;z-index:1}
+
+/* ─── SIDEBAR ─────────────────────────────── */
+.sb{position:fixed;left:0;top:0;bottom:0;width:230px;background:rgba(7,7,15,.95);
+  border-right:1px solid var(--b1);z-index:100;display:flex;flex-direction:column;
+  backdrop-filter:blur(20px)}
+
+.sb-brand{padding:22px 20px;border-bottom:1px solid var(--b1)}
+.sb-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:900;letter-spacing:-0.5px;
+  background:linear-gradient(90deg,var(--gold),var(--org));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sb-tagline{font-size:9px;color:var(--dim);letter-spacing:2.5px;text-transform:uppercase;margin-top:3px}
+
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);padding:10px 10px 4px}
+.sn{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;
+  border:1px solid transparent;background:transparent;color:var(--sub);
+  font-family:'Geist',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;
+  transition:all .15s;width:100%;text-align:left;position:relative}
+.sn:hover{background:var(--s2);color:var(--txt)}
+.sn.on{background:rgba(240,180,41,.07);border-color:rgba(240,180,41,.2);color:var(--gold)}
+.sn-ico{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sn-badge{margin-left:auto;background:var(--gold);color:#000;font-size:9px;font-weight:800;
+  padding:1px 6px;border-radius:99px;min-width:18px;text-align:center}
+.sn-new{margin-left:auto;background:var(--grn);color:#000;font-size:8px;font-weight:800;
+  padding:1px 6px;border-radius:99px;letter-spacing:.5px}
+
+.sb-plat{padding:10px;border-top:1px solid var(--b1)}
+.sb-plat-title{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);padding:0 10px 6px}
+.plat-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;
+  border:1px solid transparent;background:transparent;color:var(--sub);
+  font-family:'Geist',sans-serif;font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .15s;width:100%;text-align:left;margin-bottom:2px}
+.plat-btn:hover{border-color:var(--b2);background:var(--s1);color:var(--txt)}
+
+.sb-foot{padding:12px 20px;border-top:1px solid var(--b1);font-size:10px;color:var(--dim)}
+.sb-foot span{color:var(--grn);font-weight:700}
+
+/* ─── MAIN ────────────────────────────────── */
+.main{margin-left:230px;min-height:100vh;position:relative;z-index:1}
+
+.topbar{padding:14px 28px;border-bottom:1px solid var(--b1);
+  background:rgba(3,3,7,.85);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between}
+.tb-left h2{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:#fff}
+.tb-left p{font-size:11px;color:var(--dim);margin-top:1px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-chip{padding:5px 12px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.5px;
+  border:1px solid var(--b2);background:var(--card);color:var(--sub)}
+.tb-chip.live{background:rgba(16,224,154,.06);border-color:rgba(16,224,154,.25);color:var(--grn)}
+
+.content{padding:28px;max-width:1200px}
+
+/* ─── PAGES ───────────────────────────────── */
+.pg{display:none;animation:pgIn .25s ease}
+.pg.on{display:block}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── TYPOGRAPHY ──────────────────────────── */
+.pg-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.pg-sub{font-size:13px;color:var(--sub);margin-bottom:24px;line-height:1.6}
+.sec-label{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--dim);display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* ─── CARDS ───────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--b1);border-radius:12px;overflow:hidden}
+.card-h{padding:12px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px;
+  font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim)}
+.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.dg{background:var(--gold)}.db{background:var(--blu)}.dv{background:var(--grn)}
+.dp{background:var(--pur)}.dr{background:var(--red)}.dc{background:var(--cyn)}.do{background:var(--org)}
+.card-b{padding:16px}
+
+/* ─── GRID ────────────────────────────────── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+
+/* ─── FORMS ───────────────────────────────── */
+.fl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
+.fl label{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim)}
+.fi,.fta,.fsel{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:7px;
+  color:var(--txt);font-family:'Geist',sans-serif;font-size:13px;padding:9px 12px;
+  outline:none;transition:border-color .2s,box-shadow .2s}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(240,180,41,.07)}
+.fta{resize:vertical;line-height:1.7;min-height:80px}
+.fsel option{background:var(--s2)}
+
+/* pills */
+.pills{display:flex;gap:5px;flex-wrap:wrap}
+.pill{padding:5px 12px;border-radius:99px;border:1px solid var(--b2);background:var(--s2);
+  font-size:11px;font-weight:600;color:var(--sub);cursor:pointer;transition:all .15s;user-select:none}
+.pill:hover{border-color:var(--gold);color:var(--gold)}
+.pill-g{color:var(--gold);background:rgba(240,180,41,.08);border-color:var(--gold)}
+.pill-b{color:var(--blu);background:rgba(64,128,255,.08);border-color:var(--blu)}
+.pill-v{color:var(--grn);background:rgba(16,224,154,.08);border-color:var(--grn)}
+.pill-p{color:var(--pur);background:rgba(153,85,255,.08);border-color:var(--pur)}
+.pill-r{color:var(--red);background:rgba(255,51,85,.08);border-color:var(--red)}
+.pill-c{color:var(--cyn);background:rgba(0,204,255,.08);border-color:var(--cyn)}
+.pill-o{color:var(--org);background:rgba(255,119,34,.08);border-color:var(--org)}
+
+/* ─── BUTTONS ─────────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:10px 20px;border-radius:8px;border:none;cursor:pointer;
+  font-family:'Geist',sans-serif;font-size:13px;font-weight:600;transition:all .2s}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.bfw{width:100%}
+.bg{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000}
+.bg:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(240,180,41,.3)}
+.bv{background:linear-gradient(135deg,var(--grn),var(--grn2));color:#000}
+.bv:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(16,224,154,.25)}
+.bb{background:linear-gradient(135deg,var(--blu),var(--blu2));color:#fff}
+.bb:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(64,128,255,.25)}
+.bp{background:linear-gradient(135deg,var(--pur),var(--pur2));color:#fff}
+.bp:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(153,85,255,.25)}
+.bo{background:linear-gradient(135deg,var(--org),#dd4400);color:#fff}
+.bo:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,119,34,.25)}
+.bgh{background:transparent;border:1px solid var(--b2);color:var(--sub)}
+.bgh:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.bsm{padding:7px 13px;font-size:11px;border-radius:6px}
+
+/* ─── OUTPUT BLOCKS ───────────────────────── */
+.ob{background:var(--s2);border:1px solid var(--b1);border-radius:9px;overflow:hidden;display:none}
+.ob.on{display:block;animation:pgIn .3s ease}
+.ob-h{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--b1)}
+.ob-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:6px}
+.ob-body{padding:12px 14px;font-size:12px;line-height:1.85;color:#9898be;white-space:pre-wrap;
+  word-break:break-word;max-height:200px;overflow-y:auto;font-family:'Geist Mono',monospace}
+.ob-body::-webkit-scrollbar{width:3px}
+.ob-body::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+
+/* copy btn */
+.cb{padding:3px 9px;border-radius:5px;border:1px solid var(--b2);background:transparent;
+  color:var(--dim);font-family:'Geist',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.cb:hover{border-color:var(--gold);color:var(--gold)}
+.cb.ok{border-color:var(--grn);color:var(--grn);background:rgba(16,224,154,.06)}
+
+/* progress */
+.prog{display:none;margin-top:10px}
+.prog.on{display:block}
+.prog-bar{height:2px;background:var(--b1);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--grn),var(--blu),var(--gold));
+  background-size:400%;animation:pa 2s linear infinite;width:100%}
+@keyframes pa{0%{background-position:0%}100%{background-position:400%}}
+.prog-txt{font-size:11px;color:var(--gold);text-align:center;font-weight:600}
+
+/* char counter */
+.cc{font-size:10px;color:var(--dim);text-align:right;margin-top:3px;font-family:'Geist Mono',monospace}
+.cc.warn{color:var(--gold)}.cc.over{color:var(--red)}
+
+/* ═══════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════ */
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.ds{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:18px}
+.ds-val{font-family:'Syne',sans-serif;font-size:30px;font-weight:900;line-height:1;margin-bottom:5px}
+.ds-val.g{color:var(--gold)}.ds-val.v{color:var(--grn)}.ds-val.b{color:var(--blu)}.ds-val.p{color:var(--pur)}
+.ds-lbl{font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px}
+
+.dash-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;
+  background:var(--b1);border-radius:12px;overflow:hidden;margin-bottom:22px;border:1px solid var(--b1)}
+.df{background:var(--card);padding:20px 16px;text-align:center;cursor:pointer;transition:background .15s;border-right:1px solid var(--b1)}
+.df:last-child{border-right:none}
+.df:hover{background:var(--card2)}
+.df.done{background:rgba(16,224,154,.03)}
+.df.curr{background:rgba(240,180,41,.04)}
+.df-ico{font-size:24px;margin-bottom:8px}
+.df-n{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+.df-t{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:3px}
+.df-s{font-size:10px;color:var(--dim)}
+.df-s.sv{color:var(--grn)}.df-s.sg{color:var(--gold)}
+
+.dash-q{background:var(--card);border:1px solid var(--b1);border-radius:12px;overflow:hidden}
+.dq-h{padding:12px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.dq-ht{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.dq-hc{font-size:11px;color:var(--dim)}
+.qi{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--b1);transition:background .15s}
+.qi:last-child{border-bottom:none}
+.qi:hover{background:var(--s2)}
+.qi-n{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.qi-i{flex:1;min-width:0}
+.qi-t{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qi-m{font-size:10px;color:var(--dim);margin-top:2px}
+.qi-a{display:flex;gap:5px}
+.qa{padding:4px 9px;border-radius:5px;border:1px solid var(--b2);background:transparent;
+  color:var(--dim);font-family:'Geist',sans-serif;font-size:9px;font-weight:700;cursor:pointer;transition:all .15s}
+.qa:hover{border-color:var(--gold);color:var(--gold)}
+.qa.del:hover{border-color:var(--red);color:var(--red)}
+.empty{text-align:center;padding:36px;color:var(--dim);font-size:13px}
+
+/* ═══════════════════════════════════════
+   SCRIPT GENERATOR (replaces InVideo AI $25/mo)
+════════════════════════════════════════ */
+.gen-layout{display:grid;grid-template-columns:380px 1fr;gap:18px;align-items:start}
+
+/* ═══════════════════════════════════════
+   VOICE STUDIO (replaces ElevenLabs $22/mo)
+════════════════════════════════════════ */
+.voice-bar{background:var(--card2);border:1px solid var(--b1);border-radius:10px;
+  padding:14px 18px;display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.vb-ava{font-size:28px;flex-shrink:0}
+.vb-info{flex:1}
+.vb-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px}
+.vb-status{font-size:11px;color:var(--dim)}
+.vb-viz{display:flex;align-items:center;gap:2px;height:22px}
+.vz{width:3px;height:3px;border-radius:99px;background:var(--grn);opacity:.25;transition:height .06s}
+.vz.on{opacity:.75;animation:vzA .8s ease-in-out infinite}
+.vz:nth-child(2){animation-delay:.1s}.vz:nth-child(3){animation-delay:.2s}
+.vz:nth-child(4){animation-delay:.15s}.vz:nth-child(5){animation-delay:.05s}
+.vz:nth-child(6){animation-delay:.22s}.vz:nth-child(7){animation-delay:.12s}
+@keyframes vzA{0%,100%{height:3px}50%{height:18px}}
+.vb-btns{display:flex;gap:6px}
+
+.voice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.vc{background:var(--s2);border:2px solid var(--b1);border-radius:10px;padding:13px;
+  cursor:pointer;transition:all .2s;position:relative}
+.vc:hover{border-color:var(--b3);transform:translateY(-2px)}
+.vc.sel{border-color:var(--gold);background:rgba(240,180,41,.05)}
+.vc-top{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.vc-ava{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px}
+.vc-nm{font-size:12px;font-weight:700;color:#fff}
+.vc-tp{font-size:10px;color:var(--dim);margin-top:1px}
+.vc-desc{font-size:10px;color:var(--sub);line-height:1.5;margin-bottom:8px}
+.vc-tags{display:flex;gap:3px;flex-wrap:wrap}
+.vc-tag{padding:2px 6px;border-radius:4px;font-size:8px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.vt-rel{background:rgba(240,180,41,.12);color:var(--gold)}
+.vt-his{background:rgba(64,128,255,.12);color:var(--blu)}
+.vt-spt{background:rgba(16,224,154,.12);color:var(--grn)}
+.vt-all{background:rgba(153,85,255,.12);color:var(--pur)}
+.vc-pbtn{position:absolute;top:10px;right:10px;width:24px;height:24px;border-radius:50%;
+  border:1px solid var(--b2);background:transparent;color:var(--dim);font-size:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .15s}
+.vc-pbtn:hover{border-color:var(--gold);color:var(--gold)}
+.vc-pbtn.playing{border-color:var(--grn);color:var(--grn);background:rgba(16,224,154,.1)}
+
+/* voice settings panel */
+.voice-settings{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:16px;margin-bottom:14px}
+.vs-title{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.vs-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.vs-lbl{font-size:11px;color:var(--sub);width:80px;flex-shrink:0}
+.slider{flex:1;-webkit-appearance:none;height:3px;border-radius:99px;
+  background:linear-gradient(90deg,var(--gold) 0%,var(--b2) 0%);outline:none;cursor:pointer}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+  background:var(--gold);cursor:pointer;box-shadow:0 0 8px rgba(240,180,41,.4)}
+.vs-val{font-size:11px;color:var(--gold);width:32px;text-align:right;font-family:'Geist Mono',monospace}
+
+/* ═══════════════════════════════════════
+   VIDEO BUILDER (replaces CapCut AI $30/mo)
+════════════════════════════════════════ */
+.vb-layout{display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start}
+
+.scene-list{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.scene{background:var(--s2);border:1px solid var(--b1);border-radius:9px;
+  padding:12px;display:flex;gap:10px;align-items:flex-start;cursor:pointer;
+  transition:border-color .15s,background .15s}
+.scene:hover{border-color:var(--b2)}
+.scene.act{border-color:var(--blu);background:rgba(64,128,255,.05)}
+.sc-num{width:26px;height:26px;border-radius:6px;background:var(--b1);
+  display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;
+  font-size:11px;font-weight:700;color:var(--sub);flex-shrink:0}
+.sc-info{flex:1}
+.sc-lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:3px}
+.sc-txt{font-size:11px;color:var(--sub);line-height:1.5}
+.sc-vis{width:48px;height:32px;border-radius:5px;background:var(--b1);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sc-edit{padding:3px 8px;border-radius:5px;border:1px solid var(--b2);background:transparent;
+  color:var(--dim);font-size:9px;cursor:pointer;transition:all .15s;font-family:'Geist',monospace}
+.sc-edit:hover{border-color:var(--blu);color:var(--blu)}
+
+/* phone preview */
+.phone{background:var(--b1);border-radius:20px;border:2px solid var(--b2);
+  aspect-ratio:9/16;max-height:440px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:10px}
+.phone-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:90px;opacity:.12;transition:all .4s}
+.phone-grad{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,.85))}
+.phone-cap{position:absolute;bottom:55px;left:0;right:0;text-align:center;padding:0 18px}
+.phone-cap-txt{font-family:'Syne',sans-serif;font-size:17px;font-weight:900;color:#fff;
+  text-shadow:0 2px 12px rgba(0,0,0,.9);line-height:1.2;
+  animation:capAnim .3s ease}
+@keyframes capAnim{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.phone-badge{position:absolute;top:12px;left:12px;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.1);
+  border-radius:5px;padding:3px 8px;font-size:9px;color:#fff;font-weight:700;letter-spacing:.5px}
+.phone-prog{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--b1)}
+.phone-prog-fill{height:100%;background:var(--red);transition:width .3s}
+.phone-nav{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-bottom:10px}
+.phone-counter{font-size:11px;color:var(--dim);text-align:center;font-family:'Geist Mono',monospace}
+
+/* capcut export */
+.capcut-box{background:rgba(64,128,255,.05);border:1px solid rgba(64,128,255,.2);
+  border-radius:10px;padding:16px;margin-bottom:12px}
+.cc-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:5px}
+.cc-sub{font-size:11px;color:var(--sub);line-height:1.5;margin-bottom:12px}
+.cc-link{display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px;border-radius:7px;background:var(--blu);color:#fff;
+  font-family:'Geist',sans-serif;font-size:12px;font-weight:700;text-decoration:none;
+  transition:all .2s}
+.cc-link:hover{background:var(--blu2);transform:translateY(-1px)}
+
+/* pexels search */
+.pexels-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px}
+.pex-results{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.pex-thumb{border-radius:6px;aspect-ratio:9/16;background:var(--b1);
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;overflow:hidden}
+.pex-thumb:hover{border-color:var(--gold);transform:scale(1.02)}
+.pex-thumb.used{border-color:var(--grn)}
+.pex-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);
+  padding:3px 6px;font-size:8px;font-weight:700;color:#fff;text-align:center}
+
+/* ═══════════════════════════════════════
+   SCHEDULER (replaces Metricool $18/mo + Buffer $15/mo)
+════════════════════════════════════════ */
+.sched-layout{display:grid;grid-template-columns:1fr 280px;gap:18px;align-items:start}
+.sched-q{display:flex;flex-direction:column;gap:10px}
+
+.si{background:var(--card);border:1px solid var(--b1);border-radius:11px;padding:16px;transition:border-color .2s}
+.si:hover{border-color:var(--b2)}
+.si.done{border-color:rgba(16,224,154,.25);background:rgba(16,224,154,.02)}
+.si-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.si-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.si-nfo h4{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+.si-nfo p{font-size:10px;color:var(--dim)}
+.si-del{margin-left:auto;padding:5px 9px;border-radius:5px;border:1px solid rgba(255,51,85,.2);
+  background:transparent;color:var(--red);font-size:9px;font-weight:700;cursor:pointer;transition:all .15s}
+.si-del:hover{background:rgba(255,51,85,.1)}
+.si-plats{display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap}
+.sp{padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:1px solid}
+.sp-yt{background:rgba(255,51,85,.08);color:#ff4455;border-color:rgba(255,51,85,.2)}
+.sp-tt{background:rgba(16,224,154,.08);color:var(--grn);border-color:rgba(16,224,154,.2)}
+.sp-ig{background:rgba(153,85,255,.08);color:var(--pur);border-color:rgba(153,85,255,.2)}
+.si-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.si-time{background:var(--s2);border:1px solid var(--b2);border-radius:7px;color:var(--txt);
+  font-family:'Geist',sans-serif;font-size:12px;padding:8px 10px;outline:none;width:100%;transition:border-color .2s}
+.si-time:focus{border-color:var(--gold)}
+.si-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:5px}
+.sl{padding:7px 5px;border-radius:7px;border:1px solid var(--b2);background:transparent;
+  color:var(--dim);font-family:'Geist',sans-serif;font-size:10px;font-weight:700;
+  cursor:pointer;text-align:center;text-decoration:none;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;gap:3px}
+.sl:hover{transform:translateY(-1px)}
+.sl-yt:hover{border-color:#ff4455;color:#ff4455}
+.sl-tt:hover{border-color:var(--grn);color:var(--grn)}
+.sl-ig:hover{border-color:var(--pur);color:var(--pur)}
+
+/* sched sidebar */
+.ss-card{background:var(--card);border:1px solid var(--b1);border-radius:10px;padding:16px;margin-bottom:12px}
+.ss-t{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+.ss-row{display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--b1)}
+.ss-row:last-child{border-bottom:none}
+.ss-l{font-size:11px;color:var(--sub)}
+.ss-v{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#fff}
+.ss-v.g{color:var(--gold)}.ss-v.v{color:var(--grn)}
+
+.tips-card{background:rgba(240,180,41,.04);border:1px solid rgba(240,180,41,.12);border-radius:10px;padding:14px}
+.tips-t{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.tip{font-size:11px;color:#888;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);line-height:1.5}
+.tip:last-child{border-bottom:none}
+.tip strong{color:#ccc}
+
+/* ═══════════════════════════════════════
+   CAPTION EDITOR (replaces Repurpose.io $25/mo)
+════════════════════════════════════════ */
+.cap-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.cap-plat{background:var(--card);border:1px solid var(--b1);border-radius:10px;overflow:hidden}
+.cap-h{padding:10px 14px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px}
+.cap-icon{font-size:16px}
+.cap-name{font-size:11px;font-weight:700;color:#fff}
+.cap-lim{font-size:10px;color:var(--dim);margin-left:auto;font-family:'Geist Mono',monospace}
+.cap-body{padding:14px;display:flex;flex-direction:column;gap:10px}
+.cap-field{background:var(--s2);border:1px solid var(--b2);border-radius:7px;
+  color:var(--txt);font-family:'Geist',sans-serif;font-size:12px;padding:10px;
+  outline:none;resize:none;width:100%;line-height:1.7;transition:border-color .2s}
+.cap-field:focus{border-color:var(--gold)}
+
+/* ─── TOAST ───────────────────────────────── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--card2);
+  border:1px solid var(--b2);border-radius:9px;padding:11px 18px;font-size:12px;
+  font-weight:600;color:#fff;z-index:9999;transform:translateX(200px);opacity:0;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:280px;
+  box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.toast.on{transform:translateX(0);opacity:1}
+.toast.tok{border-color:rgba(16,224,154,.4);color:var(--grn)}
+.toast.terr{border-color:rgba(255,51,85,.4);color:var(--red)}
+.toast.tinfo{border-color:rgba(64,128,255,.4);color:var(--blu)}
+
+@media(max-width:900px){.sb{display:none}.main{margin-left:0}.g2,.g3,.g4,.dash-stats,.dash-flow,.gen-layout,.vb-layout,.sched-layout,.cap-layout,.voice-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ──────────────────────────── -->
+<div class="sb">
+  <div class="sb-brand">
+    <div class="sb-logo">⚡ EMPIRE PRO</div>
+    <div class="sb-tagline">Free Creator Suite</div>
+  </div>
+  <div class="sb-nav">
+    <div class="sb-sec">Overview</div>
+    <button class="sn on" onclick="go('dash')"><span class="sn-ico">🏠</span>Dashboard</button>
+
+    <div class="sb-sec">Workflow</div>
+    <button class="sn" onclick="go('gen')"><span class="sn-ico">✍️</span>Script Generator</button>
+    <button class="sn" onclick="go('voice')"><span class="sn-ico">🎙️</span>Voice Studio <span class="sn-new">28 VOICES</span></button>
+    <button class="sn" onclick="go('video')"><span class="sn-ico">🎬</span>Video Builder</button>
+    <button class="sn" onclick="go('captions')"><span class="sn-ico">💬</span>Caption Editor</button>
+    <button class="sn" onclick="go('sched')"><span class="sn-ico">🚀</span>Scheduler <span class="sn-badge" id="q-badge">0</span></button>
+
+    <div class="sb-sec">Tools Replaced</div>
+    <button class="sn" style="cursor:default;opacity:.5"><span class="sn-ico">❌</span>ElevenLabs $22/mo</button>
+    <button class="sn" style="cursor:default;opacity:.5"><span class="sn-ico">❌</span>InVideo AI $25/mo</button>
+    <button class="sn" style="cursor:default;opacity:.5"><span class="sn-ico">❌</span>Metricool $18/mo</button>
+    <button class="sn" style="cursor:default;opacity:.5"><span class="sn-ico">❌</span>Buffer $15/mo</button>
+    <button class="sn" style="cursor:default;opacity:.5"><span class="sn-ico">❌</span>Repurpose.io $25/mo</button>
+  </div>
+  <div class="sb-plat">
+    <div class="sb-plat-title">Open Platforms</div>
+    <button class="plat-btn" onclick="window.open('https://studio.youtube.com','_blank')">▶ YouTube Studio</button>
+    <button class="plat-btn" onclick="window.open('https://www.tiktok.com/studio','_blank')">♪ TikTok Studio</button>
+    <button class="plat-btn" onclick="window.open('https://business.facebook.com','_blank')">◈ Meta Business</button>
+    <button class="plat-btn" onclick="window.open('https://www.capcut.com','_blank')">✂ CapCut</button>
+  </div>
+  <div class="sb-foot">Saved <span>$105/mo</span> in subscriptions</div>
+</div>
+
+<!-- ─── MAIN ─────────────────────────────── -->
+<div class="main z">
+  <div class="topbar">
+    <div class="tb-left">
+      <h2 id="tb-t">Dashboard</h2>
+      <p id="tb-s">Your full free creator workflow</p>
+    </div>
+    <div class="tb-right">
+      <div class="tb-chip live">● Active</div>
+      <div class="tb-chip" id="tb-q">0 in queue</div>
+    </div>
+  </div>
+
+  <div class="content z">
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="pg on" id="pg-dash">
+    <div class="dash-stats">
+      <div class="ds"><div class="ds-val g" id="d-gen">0</div><div class="ds-lbl">Generated</div></div>
+      <div class="ds"><div class="ds-val v" id="d-q">0</div><div class="ds-lbl">In Queue</div></div>
+      <div class="ds"><div class="ds-val b" id="d-sc">0</div><div class="ds-lbl">Scheduled</div></div>
+      <div class="ds"><div class="ds-val p" id="d-pt">0</div><div class="ds-lbl">Total Posts</div></div>
+    </div>
+    <div class="dash-flow">
+      <div class="df curr" id="df1" onclick="go('gen')"><div class="df-ico">✍️</div><div class="df-n">Step 01</div><div class="df-t">Generate</div><div class="df-s sg" id="dfs1">→ Start here</div></div>
+      <div class="df" id="df2" onclick="go('voice')"><div class="df-ico">🎙️</div><div class="df-n">Step 02</div><div class="df-t">Voice</div><div class="df-s" id="dfs2">Waiting</div></div>
+      <div class="df" id="df3" onclick="go('video')"><div class="df-ico">🎬</div><div class="df-n">Step 03</div><div class="df-t">Video</div><div class="df-s" id="dfs3">Waiting</div></div>
+      <div class="df" id="df4" onclick="go('captions')"><div class="df-ico">💬</div><div class="df-n">Step 04</div><div class="df-t">Captions</div><div class="df-s" id="dfs4">Waiting</div></div>
+      <div class="df" id="df5" onclick="go('sched')"><div class="df-ico">🚀</div><div class="df-n">Step 05</div><div class="df-t">Schedule</div><div class="df-s" id="dfs5">Waiting</div></div>
+    </div>
+    <div class="dash-q">
+      <div class="dq-h"><div class="dq-ht">Video Queue</div><div class="dq-hc" id="dq-c">0 videos</div></div>
+      <div id="dash-q-list"><div class="empty">Nothing yet — go to Script Generator to create your first video ⚡</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ SCRIPT GENERATOR ═══ (replaces InVideo AI $25/mo) -->
+  <div class="pg" id="pg-gen">
+    <div class="pg-title">Script Generator</div>
+    <div class="pg-sub">Replaces InVideo AI ($25/mo) — AI writes script, 3 titles, 12 captions, and 30 hashtags in full</div>
+    <div class="gen-layout">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-h"><div class="dot dg"></div>Video Setup</div>
+          <div class="card-b">
+            <div class="fl"><label>Niche</label>
+              <div class="pills" id="niche-p">
+                <div class="pill pill-g" data-n="religion" onclick="setN(this)">✝️ Religion</div>
+                <div class="pill" data-n="history" onclick="setN(this)">🏛️ History</div>
+                <div class="pill" data-n="sports" onclick="setN(this)">🏆 Sports</div>
+              </div>
+            </div>
+            <div class="fl"><label>OpenRouter API Key</label>
+              <input type="password" class="fi" id="api-key-input" placeholder="sk-or-v1-...  (paste your OpenRouter key here)"/>
+              <div style="font-size:9px;color:var(--dim);margin-top:3px">Get a free key at <strong style="color:var(--gold)">openrouter.ai</strong> → Keys. Stays in your browser only — never sent anywhere except the API call.</div>
+            </div>
+            <div class="fl"><label>Topic</label><input type="text" class="fi" id="g-topic" placeholder="e.g. The angels described in Revelation"/></div>
+            <div class="g2" style="gap:10px">
+              <div class="fl"><label>Length</label>
+                <select class="fsel" id="g-dur">
+                  <option value="30">30 seconds (~75 words)</option>
+                  <option value="45" selected>45 seconds (~115 words)</option>
+                  <option value="60">60 seconds (~150 words)</option>
+                </select>
+              </div>
+              <div class="fl"><label>Tone</label>
+                <select class="fsel" id="g-tone">
+                  <option value="mysterious">Mysterious</option>
+                  <option value="dramatic">Dramatic</option>
+                  <option value="dark">Dark & Intense</option>
+                  <option value="hype">High Energy Hype</option>
+                  <option value="educational">Educational</option>
+                  <option value="conspiratorial">Conspiratorial</option>
+                </select>
+              </div>
+            </div>
+            <div class="fl"><label>Platforms</label>
+              <div class="pills" id="plat-p">
+                <div class="pill pill-r" data-p="yt" onclick="togP(this)">▶ YouTube</div>
+                <div class="pill pill-v" data-p="tt" onclick="togP(this)">♪ TikTok</div>
+                <div class="pill pill-p" data-p="ig" onclick="togP(this)">◈ Instagram</div>
+              </div>
+            </div>
+            <button class="btn bg bfw" id="gen-btn" onclick="generate()">⚡ Generate Everything</button>
+            <div class="prog" id="gen-prog"><div class="prog-bar"><div class="prog-fill"></div></div><div class="prog-txt" id="gen-status">Writing your script...</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="ob" id="ob-script">
+          <div class="ob-h"><div class="ob-lbl">📝 Voiceover Script</div><button class="cb" onclick="copy('ob-script-t',this)">Copy</button></div>
+          <div class="ob-body" id="ob-script-t"></div>
+        </div>
+        <div class="ob" id="ob-titles">
+          <div class="ob-h"><div class="ob-lbl">🎯 3 Title Options</div><button class="cb" onclick="copy('ob-titles-t',this)">Copy</button></div>
+          <div class="ob-body" id="ob-titles-t"></div>
+        </div>
+        <div class="ob" id="ob-caps">
+          <div class="ob-h"><div class="ob-lbl">💬 12 On-Screen Captions</div><button class="cb" onclick="copy('ob-caps-t',this)">Copy</button></div>
+          <div class="ob-body" id="ob-caps-t"></div>
+        </div>
+        <div class="ob" id="ob-tags">
+          <div class="ob-h"><div class="ob-lbl"># 30 Hashtags</div><button class="cb" onclick="copy('ob-tags-t',this)">Copy</button></div>
+          <div class="ob-body" id="ob-tags-t"></div>
+        </div>
+        <div class="ob" id="ob-desc">
+          <div class="ob-h"><div class="ob-lbl">📄 YouTube Description</div><button class="cb" onclick="copy('ob-desc-t',this)">Copy</button></div>
+          <div class="ob-body" id="ob-desc-t"></div>
+        </div>
+        <button class="btn bb bfw" id="to-voice-btn" style="display:none" onclick="go('voice')">🎙️ Next: Pick Your Voice →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VOICE STUDIO ═══ (replaces ElevenLabs $22/mo) -->
+  <div class="pg" id="pg-voice">
+    <div class="pg-title">Voice Studio</div>
+    <div class="pg-sub">Replaces ElevenLabs ($22/mo) — 28 voices across 4 moods. The top 8 sound the most natural and human. Click ▶ on any card to hear it.</div>
+
+    <div class="voice-bar">
+      <div class="vb-ava" id="vb-ava">🎙️</div>
+      <div class="vb-info"><div class="vb-name" id="vb-nm">Select a voice below</div><div class="vb-status" id="vb-st">Click any voice card to choose it, then hit Preview Script</div></div>
+      <div class="vb-viz" id="vb-viz"><div class="vz"></div><div class="vz"></div><div class="vz"></div><div class="vz"></div><div class="vz"></div><div class="vz"></div><div class="vz"></div></div>
+      <div class="vb-btns">
+        <button class="btn bv bsm" onclick="previewV()">▶ Preview Script</button>
+        <button class="btn bgh bsm" onclick="stopV()">■ Stop</button>
+      </div>
+    </div>
+
+    <div class="voice-settings">
+      <div class="vs-title">Voice Fine-Tuning</div>
+      <div class="vs-row"><span class="vs-lbl">Speed</span><input type="range" class="slider" id="vs-rate" min="60" max="160" value="90" oninput="updateSlider('vs-rate','vs-rate-v')"><span class="vs-val" id="vs-rate-v">0.9x</span></div>
+      <div class="vs-row"><span class="vs-lbl">Pitch</span><input type="range" class="slider" id="vs-pitch" min="40" max="180" value="80" oninput="updateSlider('vs-pitch','vs-pitch-v')"><span class="vs-val" id="vs-pitch-v">0.8</span></div>
+      <div class="vs-row"><span class="vs-lbl">Volume</span><input type="range" class="slider" id="vs-vol" min="50" max="100" value="100" oninput="updateSlider('vs-vol','vs-vol-v')"><span class="vs-val" id="vs-vol-v">100%</span></div>
+    </div>
+
+    <div class="voice-grid" id="voice-grid"></div>
+
+    <div class="g2" style="gap:10px">
+      <button class="btn bgh bfw" onclick="go('gen')">← Back to Generator</button>
+      <button class="btn bp bfw" onclick="go('video')">🎬 Next: Build Video →</button>
+    </div>
+  </div>
+
+  <!-- ═══ VIDEO BUILDER ═══ (replaces CapCut AI $30/mo) -->
+  <div class="pg" id="pg-video">
+    <div class="pg-title">Video Builder</div>
+    <div class="pg-sub">Replaces CapCut AI ($30/mo) — break your script into scenes, find free visuals, preview the video, export to CapCut to render</div>
+
+    <div class="vb-layout">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h"><div class="dot db"></div>Scene Breakdown</div>
+          <div class="card-b">
+            <div class="scene-list" id="scene-list"><div class="empty">Generate a script first ✍️</div></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-h"><div class="dot dc"></div>Scene Visual Picker — Free Stock at pexels.com</div>
+          <div class="card-b">
+            <div class="pexels-row">
+              <input type="text" class="fi" id="pex-q" placeholder="Search: ancient ruins, basketball game, church interior..."/>
+              <button class="btn bb bsm" onclick="searchPexels()">Search</button>
+            </div>
+            <div class="pex-results" id="pex-results">
+              <div class="pex-thumb" onclick="usePexels('🏛️','Ancient Ruins')"><div>🏛️</div><div class="pex-lbl">Ancient Ruins</div></div>
+              <div class="pex-thumb" onclick="usePexels('⛪','Cathedral')"><div>⛪</div><div class="pex-lbl">Cathedral</div></div>
+              <div class="pex-thumb" onclick="usePexels('🌌','Night Sky')"><div>🌌</div><div class="pex-lbl">Night Sky</div></div>
+              <div class="pex-thumb" onclick="usePexels('🏆','Trophy')"><div>🏆</div><div class="pex-lbl">Trophy</div></div>
+              <div class="pex-thumb" onclick="usePexels('⚔️','Battle')"><div>⚔️</div><div class="pex-lbl">Battle</div></div>
+              <div class="pex-thumb" onclick="usePexels('📜','Ancient Scroll')"><div>📜</div><div class="pex-lbl">Ancient Scroll</div></div>
+            </div>
+            <p style="font-size:10px;color:var(--dim)">Pick a visual theme per scene for the preview. For real stock footage go to <strong style="color:var(--cyn)">pexels.com</strong> — 100% free commercial use.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><div class="dot dv"></div>Export to CapCut (Free)</div>
+          <div class="card-b">
+            <div class="capcut-box">
+              <div class="cc-title">📋 Step 1 — Copy your script</div>
+              <div class="cc-sub">Copy the script below, then click Open CapCut. In CapCut: AI Video → paste script → pick Documentary style → AI Voiceover → 9:16 format → Generate → Export MP4</div>
+              <div class="ob on" style="margin-bottom:10px">
+                <div class="ob-h"><div class="ob-lbl">Script for CapCut</div><button class="cb" onclick="copy('capcut-s',this)">Copy</button></div>
+                <div class="ob-body" id="capcut-s">Generate a script first...</div>
+              </div>
+              <a href="https://www.capcut.com" target="_blank" class="cc-link">✂️ Open CapCut Free →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-bottom:10px">
+          <div class="card-h"><div class="dot dp"></div>Phone Preview (9:16)</div>
+          <div class="card-b">
+            <div class="phone">
+              <div class="phone-bg" id="ph-bg">🎬</div>
+              <div class="phone-grad"></div>
+              <div class="phone-badge" id="ph-badge">Scene 1 / 1</div>
+              <div class="phone-cap"><div class="phone-cap-txt" id="ph-cap">Generate a script to preview</div></div>
+              <div class="phone-prog"><div class="phone-prog-fill" id="ph-prog" style="width:0%"></div></div>
+            </div>
+            <div class="phone-nav">
+              <button class="btn bgh bsm" onclick="prevSc()">← Prev</button>
+              <div class="phone-counter" id="ph-count">— / —</div>
+              <button class="btn bgh bsm" onclick="nextSc()">Next →</button>
+            </div>
+            <button class="btn bg bfw bsm" onclick="playFull()">▶ Play Full Voiceover</button>
+          </div>
+        </div>
+        <div class="g2" style="gap:8px">
+          <button class="btn bgh bfw bsm" onclick="go('voice')">← Back</button>
+          <button class="btn bv bfw bsm" onclick="addToQ()">+ Add to Queue →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CAPTION EDITOR ═══ (replaces Repurpose.io $25/mo) -->
+  <div class="pg" id="pg-captions">
+    <div class="pg-title">Caption Editor</div>
+    <div class="pg-sub">Replaces Repurpose.io ($25/mo) — auto-formats your content for each platform's exact specs. Edit each field then copy.</div>
+
+    <div class="cap-layout" style="margin-bottom:14px">
+      <div class="cap-plat">
+        <div class="cap-h"><span class="cap-icon">▶</span><span class="cap-name">YouTube Shorts</span><span class="cap-lim" id="yt-count">0/60 chars</span></div>
+        <div class="cap-body">
+          <div class="fl"><label>Title (max 60 chars)</label><input type="text" class="fi" id="cap-yt-title" oninput="capCC(this,'yt-count',60,'yt-title-cc')" placeholder="Your YouTube title..."/><div class="cc" id="yt-title-cc">0/60</div></div>
+          <div class="fl"><label>Description</label><textarea class="cap-field" id="cap-yt-desc" rows="4" placeholder="YouTube description with links and keywords..."></textarea></div>
+          <div class="fl"><label>Tags (comma separated)</label><input type="text" class="fi" id="cap-yt-tags" placeholder="religion, bible facts, faith shorts..."/></div>
+          <button class="btn bg bfw bsm" onclick="copyAllYT()">Copy All YouTube Content</button>
+        </div>
+      </div>
+      <div class="cap-plat">
+        <div class="cap-h"><span class="cap-icon">♪</span><span class="cap-name">TikTok</span><span class="cap-lim" id="tt-count">0/2200 chars</span></div>
+        <div class="cap-body">
+          <div class="fl"><label>Caption (max 2200 chars, keep it punchy)</label><textarea class="cap-field" id="cap-tt-cap" rows="3" oninput="capCC(this,'tt-count',2200,'tt-cap-cc')" placeholder="Short punchy caption..."></textarea><div class="cc" id="tt-cap-cc">0/2200</div></div>
+          <div class="fl"><label>Hashtags (30 recommended)</label><textarea class="cap-field" id="cap-tt-tags" rows="3" placeholder="#fyp #viral #shorts..."></textarea></div>
+          <button class="btn bv bfw bsm" onclick="copyAllTT()">Copy All TikTok Content</button>
+        </div>
+      </div>
+    </div>
+    <div class="cap-layout">
+      <div class="cap-plat">
+        <div class="cap-h"><span class="cap-icon">◈</span><span class="cap-name">Instagram Reels</span><span class="cap-lim">Max 2200 chars</span></div>
+        <div class="cap-body">
+          <div class="fl"><label>Caption</label><textarea class="cap-field" id="cap-ig-cap" rows="3" placeholder="Instagram caption..."></textarea></div>
+          <div class="fl"><label>Hashtags (30 max)</label><textarea class="cap-field" id="cap-ig-tags" rows="3" placeholder="#reels #fyp..."></textarea></div>
+          <button class="btn bp bfw bsm" onclick="copyAllIG()">Copy All Instagram Content</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><div class="dot dg"></div>Auto-Fill From Script</div>
+        <div class="card-b">
+          <p style="font-size:12px;color:var(--sub);line-height:1.7;margin-bottom:12px">Click below to auto-fill all caption fields from your generated content. Then edit each one to your liking.</p>
+          <button class="btn bg bfw" onclick="autoFillCaps()">⚡ Auto-Fill All Platforms</button>
+          <div style="height:12px"></div>
+          <button class="btn bgh bfw bsm" onclick="go('video')">← Back to Video</button>
+          <div style="height:8px"></div>
+          <button class="btn bv bfw bsm" onclick="go('sched')">🚀 Go to Scheduler →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SCHEDULER ═══ (replaces Metricool $18/mo + Buffer $15/mo) -->
+  <div class="pg" id="pg-sched">
+    <div class="pg-title">Scheduler</div>
+    <div class="pg-sub">Replaces Metricool ($18/mo) + Buffer ($15/mo) — set your post times, open each platform, upload your CapCut video</div>
+    <div class="sched-layout">
+      <div class="sched-q" id="sched-list"><div class="empty">No videos queued yet. Generate content and add it to the queue first! ✍️</div></div>
+      <div>
+        <div class="ss-card">
+          <div class="ss-t">Week Stats</div>
+          <div class="ss-row"><span class="ss-l">In queue</span><span class="ss-v g" id="ss-q">0</span></div>
+          <div class="ss-row"><span class="ss-l">Scheduled</span><span class="ss-v v" id="ss-sc">0</span></div>
+          <div class="ss-row"><span class="ss-l">Total posts</span><span class="ss-v" id="ss-pt">0</span></div>
+        </div>
+        <div class="tips-card">
+          <div class="tips-t">⚡ Quick Upload Steps</div>
+          <div class="tip"><strong>1.</strong> Export MP4 from CapCut to your Downloads folder</div>
+          <div class="tip"><strong>2.</strong> Hit Schedule button, set time to 4pm</div>
+          <div class="tip"><strong>3.</strong> Click each platform button → opens in new tab</div>
+          <div class="tip"><strong>4.</strong> Upload the MP4 + paste captions from Caption Editor</div>
+          <div class="tip"><strong>TikTok:</strong> After uploading, add a trending sound at 10% volume</div>
+          <div class="tip"><strong>Shorts:</strong> Set audience to "Not made for kids"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ 28 VOICE DEFINITIONS ════════════════════════════════════════════════════
+// Grouped: Warm & Human first, then Dramatic, then Intense/Hype
+const VOICES=[
+
+  // ── WARM & HUMAN ──────────────────────────────────────────────────────────
+  {id:'friend',nm:'Your Friend',ava:'😊',tp:'Warm Conversational',desc:'Sounds like your cool older cousin telling you the most insane thing they just learned. Natural, relaxed, real. Works on any niche.',tags:['vt-all'],rate:1.0,pitch:1.0,vol:1},
+  {id:'older-sis',nm:'Big Sister',ava:'💛',tp:'Warm Female',desc:'Caring but curious. Speaks like she\'s sharing something that genuinely amazed her. Great for faith and feel-good content.',tags:['vt-rel','vt-all'],rate:.95,pitch:1.08,vol:1},
+  {id:'dad',nm:'The Dad',ava:'👨',tp:'Steady Male',desc:'That grounded, been-around voice your dad has when he\'s telling a story that actually happened. Calm, trustworthy, warm.',tags:['vt-his','vt-rel'],rate:.9,pitch:.85,vol:1},
+  {id:'teacher',nm:'The Teacher',ava:'🍎',tp:'Friendly Educator',desc:'Not boring classroom — the cool teacher who actually made you lean in. Engaged, clear, genuinely excited about the topic.',tags:['vt-his','vt-all'],rate:.93,pitch:.97,vol:1},
+  {id:'storyteller',nm:'Storyteller',ava:'🪑',tp:'Natural Male',desc:'Sits you down and takes you somewhere. Unhurried, vivid, human. Feels like a podcast you can\'t stop listening to.',tags:['vt-all'],rate:.88,pitch:.9,vol:1},
+  {id:'curious',nm:'The Curious One',ava:'🤔',tp:'Wondering Female',desc:'Sounds genuinely surprised and fascinated, like she\'s discovering this alongside you. Pulls viewers in naturally.',tags:['vt-all'],rate:.97,pitch:1.05,vol:1},
+  {id:'homie',nm:'The Homie',ava:'🤝',tp:'Casual Male',desc:'Talking to you like a text message, not a broadcast. No script energy, just real. Best for sports facts and street-level history.',tags:['vt-spt','vt-all'],rate:1.05,pitch:.98,vol:1},
+  {id:'auntie',nm:'The Auntie',ava:'🫶',tp:'Warm Mature Female',desc:'Full of warmth, wisdom, and just a hint of drama. Perfect for faith content that feels personal and lived-in.',tags:['vt-rel'],rate:.87,pitch:1.1,vol:.97},
+
+  // ── CALM & DOCUMENTARY ───────────────────────────────────────────────────
+  {id:'narrator',nm:'The Narrator',ava:'📖',tp:'Neutral Clean',desc:'Versatile, clean, professional. Works on any niche and any topic without missing a beat.',tags:['vt-all'],rate:.92,pitch:.88,vol:1},
+  {id:'scholar',nm:'The Scholar',ava:'🎓',tp:'Calm Narrator',desc:'Clear, intelligent, credible. Great for educational history content with staying power.',tags:['vt-his'],rate:.87,pitch:.82,vol:1},
+  {id:'anchor',nm:'The Anchor',ava:'📺',tp:'News Female',desc:'Crisp, urgent, professional. Documentary-style delivery audiences instantly trust.',tags:['vt-his','vt-all'],rate:.95,pitch:.92,vol:1},
+  {id:'poet',nm:'The Poet',ava:'🖋️',tp:'Soft Female',desc:'Measured, graceful, magnetic. Works beautifully across history and spiritual content.',tags:['vt-his','vt-rel'],rate:.85,pitch:1.1,vol:.95},
+  {id:'sage',nm:'The Sage',ava:'🌿',tp:'Calm Female',desc:'Peaceful wisdom energy. Great for spiritual content, meditation, and positive faith videos.',tags:['vt-rel'],rate:.83,pitch:1.15,vol:.9},
+  {id:'elder',nm:'The Elder',ava:'📜',tp:'Wise Old Male',desc:'Slow, measured, heavy with knowledge. Perfect for ancient history and sacred texts.',tags:['vt-rel','vt-his'],rate:.8,pitch:.62,vol:1},
+
+  // ── DRAMATIC ─────────────────────────────────────────────────────────────
+  {id:'prophet',nm:'The Prophet',ava:'🔮',tp:'Deep Baritone',desc:'Ancient, authoritative, reverberant. Perfect for biblical revelations and hidden truth videos.',tags:['vt-rel'],rate:.72,pitch:.5,vol:1},
+  {id:'preacher',nm:'The Preacher',ava:'⛪',tp:'Passionate Male',desc:'Rising and falling with conviction. Great for faith-based viral content and spiritual revelations.',tags:['vt-rel'],rate:.88,pitch:.75,vol:1},
+  {id:'oracle',nm:'The Oracle',ava:'🌙',tp:'Ethereal Female',desc:'Floating, otherworldly, prophetic. Haunts religion and prophecy content like nothing else.',tags:['vt-rel'],rate:.78,pitch:1.25,vol:.95},
+  {id:'general',nm:'The General',ava:'⚔️',tp:'Command Male',desc:'Iron authority. Built for war stories, fallen empires, and battles that shook the earth.',tags:['vt-his'],rate:.88,pitch:.65,vol:1},
+  {id:'detective',nm:'The Detective',ava:'🔍',tp:'Noir Male',desc:'Gravelly, suspicious, conspiratorial. Great for mysteries, cover-ups, and hidden history.',tags:['vt-his','vt-rel'],rate:.82,pitch:.72,vol:1},
+  {id:'phantom',nm:'The Phantom',ava:'💀',tp:'Dark Narrator',desc:'Slow and ominous with dread beneath every word. For dark history and disturbing truths.',tags:['vt-his'],rate:.75,pitch:.55,vol:.95},
+  {id:'rebel',nm:'The Rebel',ava:'✊',tp:'Defiant Male',desc:'Anti-authority energy. They don\'t want you to know this. Perfect for exposé and conspiracy content.',tags:['vt-all'],rate:1.0,pitch:.88,vol:1},
+
+  // ── HYPE & SPORTS ─────────────────────────────────────────────────────────
+  {id:'goat',nm:'The GOAT',ava:'🏆',tp:'Confident Male',desc:'Bold, unstoppable, legendary. For athlete stories, records, and greatest-of-all-time debates.',tags:['vt-spt'],rate:1.08,pitch:1.0,vol:1},
+  {id:'coach',nm:'The Coach',ava:'📣',tp:'Motivational Male',desc:'Pushing you past your limits. Intense, driven, inspiring. Great for athlete origin stories.',tags:['vt-spt'],rate:1.05,pitch:.92,vol:1},
+  {id:'commentator',nm:'Commentator',ava:'🎤',tp:'Live Sports',desc:'Peak excitement. Rising pitch at key moments. Replicates the feel of a real game broadcast.',tags:['vt-spt'],rate:1.2,pitch:1.05,vol:1},
+  {id:'queen',nm:'The Queen',ava:'👑',tp:'Power Female',desc:'Dominant, cutting, zero patience for weakness. Viral sports commentary energy.',tags:['vt-spt'],rate:1.15,pitch:1.28,vol:1},
+  {id:'hype',nm:'The Hype',ava:'🔥',tp:'Electric Male',desc:'Pure energy detonation. Fast, loud, explosive. Sports highlights, wild records, viral moments.',tags:['vt-spt'],rate:1.3,pitch:1.18,vol:1},
+  {id:'viral',nm:'The Viral',ava:'⚡',tp:'Punchy Fast',desc:'Short punchy sentences at high speed. Engineered for maximum short-form attention retention.',tags:['vt-all'],rate:1.18,pitch:.95,vol:1},
+  {id:'titan',nm:'The Titan',ava:'💪',tp:'Deep Female',desc:'Powerful, authoritative, impossible to ignore. Commanding presence across all content types.',tags:['vt-all'],rate:.9,pitch:.82,vol:1},
+];
+
+// ══ STATE ═══════════════════════════════════════════════════════════════════
+const S={
+  niche:'religion',plats:{yt:true,tt:true,ig:true},
+  generated:null,queue:[],totalGen:0,
+  selVoice:null,scenes:[],curScene:0,
+  rateOverride:null,pitchOverride:null,volOverride:1
+};
+
+// ══ NAVIGATION ═══════════════════════════════════════════════════════════════
+const META={
+  dash:{t:'Dashboard',s:'Your full free creator workflow'},
+  gen:{t:'Script Generator',s:'Step 1 — replaces InVideo AI ($25/mo)'},
+  voice:{t:'Voice Studio',s:'Step 2 — replaces ElevenLabs ($22/mo) — 28 voices'},
+  video:{t:'Video Builder',s:'Step 3 — replaces CapCut AI ($30/mo)'},
+  captions:{t:'Caption Editor',s:'Step 4 — replaces Repurpose.io ($25/mo)'},
+  sched:{t:'Scheduler',s:'Step 5 — replaces Metricool ($18/mo) + Buffer ($15/mo)'},
+};
+function go(id){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  const snBtns=document.querySelectorAll('.sn');
+  const map={dash:0,gen:1,voice:2,video:3,captions:4,sched:5};
+  if(map[id]!==undefined)snBtns[map[id]].classList.add('on');
+  const m=META[id]||{t:id,s:''};
+  document.getElementById('tb-t').textContent=m.t;
+  document.getElementById('tb-s').textContent=m.s;
+  if(id==='voice')renderVoices();
+  if(id==='video')renderVideo();
+  if(id==='sched')renderSched();
+  if(id==='captions')renderCaps();
+  if(id==='dash')renderDash();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══ NICHE / PLATFORM ═════════════════════════════════════════════════════════
+function setN(el){
+  document.querySelectorAll('[data-n]').forEach(p=>{p.className='pill'});
+  const c={religion:'pill-g',history:'pill-b',sports:'pill-v'};
+  el.className='pill '+(c[el.dataset.n]||'pill-g');
+  S.niche=el.dataset.n;
+  const t={religion:'mysterious',history:'dramatic',sports:'hype'};
+  document.getElementById('g-tone').value=t[S.niche]||'mysterious';
+}
+function togP(el){
+  const p=el.dataset.p; S.plats[p]=!S.plats[p];
+  const c={yt:'pill-r',tt:'pill-v',ig:'pill-p'};
+  el.className=S.plats[p]?'pill '+c[p]:'pill';
+}
+
+// ══ GENERATE ═════════════════════════════════════════════════════════════════
+async function generate(){
+  const topic=document.getElementById('g-topic').value.trim();
+  if(!topic){toast('Enter a topic first','terr');document.getElementById('g-topic').focus();return;}
+
+  const apiKey=document.getElementById('api-key-input')?.value.trim()||'';
+  const dur=document.getElementById('g-dur').value;
+  const tone=document.getElementById('g-tone').value;
+  const words=Math.round(Number(dur)*2.55);
+  const plats=Object.entries(S.plats).filter(([,v])=>v)
+    .map(([k])=>k==='yt'?'YouTube Shorts':k==='tt'?'TikTok':'Instagram Reels').join(', ');
+
+  const nCtx={
+    religion:'religion/Bible/faith channel — mysterious, spiritual, thought-provoking',
+    history:'history channel covering ancient empires, wars, dark history — dramatic documentary',
+    sports:'sports facts and legends channel — high energy, athlete origin stories'
+  };
+  const tCtx={mysterious:'mysterious and eerie',dramatic:'dramatic and intense',dark:'dark and ominous',hype:'fast high-energy hype',educational:'clear and informative',conspiratorial:'conspiratorial and rebellious'};
+
+  setLoad(true,'Crafting script...');
+  hideOuts();
+
+  const prompt=`You are an expert viral short-form video creator for a ${nCtx[S.niche]}.
+
+TOPIC: "${topic}"
+VIDEO LENGTH: ${dur} seconds (~${words} words)
+TONE: ${tCtx[tone]||tone}
+PLATFORMS: ${plats}
+
+Output EXACTLY this structure. Do not add any text before section labels.
+
+[SCRIPT]
+Write a ${dur}-second voiceover script, roughly ${words} words. The very first sentence must be under 12 words and be so shocking, mysterious, or curious it stops all scrolling. Use short punchy sentences throughout. Zero stage directions. End with a question that sparks debate OR a strong "follow for more" CTA.
+
+[TITLES]
+Write exactly 3 YouTube title options. Number them 1. 2. 3. on separate lines. Each must be under 60 characters. Each must trigger massive curiosity or shock.
+
+[CAPTIONS]
+Write exactly 12 on-screen caption lines for text overlays. Number each line 1. through 12. Each caption must be 3 to 6 words only. Bold and punchy. These flash on screen during the video. Put each on its own line.
+
+[HASHTAGS]
+Write exactly 30 hashtags on one single line separated by spaces. Include: 8 mega-popular (#fyp #viral #shorts #trending), 12 niche-specific, 10 topic-specific.
+
+[DESCRIPTION]
+Write a YouTube video description: 2-3 sentences expanding on the topic, followed by a call to subscribe, then a line break, then 8-10 relevant keywords separated by commas.`;
+
+  try{
+    const headers={'Content-Type':'application/json','HTTP-Referer':'https://empire-pro.app','X-Title':'Empire Pro'};
+    if(apiKey) headers['Authorization']='Bearer '+apiKey;
+    const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{
+      method:'POST',headers,
+      body:JSON.stringify({
+        model:'anthropic/claude-sonnet-4-5',
+        max_tokens:1500,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    if(r.status===401){toast('Invalid API key — paste your OpenRouter key','terr');setLoad(false);return;}
+    if(r.status===429){toast('Rate limited — wait 30 seconds and retry','terr');setLoad(false);return;}
+    if(!r.ok)throw new Error('API '+r.status);
+    const d=await r.json();
+    const txt=d.choices?.[0]?.message?.content||'';
+    if(!txt)throw new Error('Empty response — try again');
+    const p=parseSections(txt);
+    p.topic=topic;p.niche=S.niche;p.plats={...S.plats};p.tone=tone;p.dur=dur;
+    S.generated=p;S.totalGen++;
+
+    showOut('ob-script','ob-script-t',p.script);
+    showOut('ob-titles','ob-titles-t',p.titles);
+    showOut('ob-caps','ob-caps-t',p.captions);
+    showOut('ob-tags','ob-tags-t',p.hashtags);
+    showOut('ob-desc','ob-desc-t',p.description);
+    document.getElementById('capcut-s').textContent=p.script||'';
+    document.getElementById('to-voice-btn').style.display='flex';
+
+    setFlow(1,'done','✓ Done');setFlow(2,'curr','→ Pick voice');
+    setFlow(3,'','Waiting');setFlow(4,'','Waiting');setFlow(5,'','Waiting');
+    updDash();updBadge();
+    toast('Script generated! ⚡','tok');
+  }catch(e){toast('Error: '+e.message,'terr');}
+  setLoad(false);
+}
+
+function parseSections(txt){
+  const sec=(tag,next)=>{
+    const re=new RegExp(`\\[${tag}\\]([\\s\\S]*?)(?=\\[${next||'ZZEND'}\\]|$)`,'i');
+    const m=txt.match(re);return m?m[1].trim():'';
+  };
+  return{
+    script:sec('SCRIPT','TITLES'),
+    titles:sec('TITLES','CAPTIONS'),
+    captions:sec('CAPTIONS','HASHTAGS'),
+    hashtags:sec('HASHTAGS','DESCRIPTION'),
+    description:sec('DESCRIPTION',''),
+  };
+}
+
+function showOut(bid,tid,txt){document.getElementById(bid).classList.add('on');document.getElementById(tid).textContent=txt||'(section not generated — regenerate to try again)';}
+function hideOuts(){['ob-script','ob-titles','ob-caps','ob-tags','ob-desc'].forEach(id=>document.getElementById(id).classList.remove('on'));document.getElementById('to-voice-btn').style.display='none';}
+function setLoad(on,msg=''){
+  document.getElementById('gen-prog').classList.toggle('on',on);
+  document.getElementById('gen-status').textContent=msg;
+  const b=document.getElementById('gen-btn');
+  b.disabled=on;b.innerHTML=on?'⏳ Generating...':'⚡ Generate Everything';
+}
+
+// ══ COPY ══════════════════════════════════════════════════════════════════════
+function copy(id,btn){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    btn.textContent='✓ Copied';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok');},2000);
+  });
+}
+
+// ══ VOICE STUDIO ═════════════════════════════════════════════════════════════
+function renderVoices(){
+  const g=document.getElementById('voice-grid');
+  const groups=[
+    {label:'🌿 Warm & Human — sound the most natural, great for starting out',ids:['friend','older-sis','dad','teacher','storyteller','curious','homie','auntie']},
+    {label:'📖 Calm & Documentary — clean, trusted, professional',ids:['narrator','scholar','anchor','poet','sage','elder']},
+    {label:'⚡ Dramatic — intense, cinematic, stops the scroll',ids:['prophet','preacher','oracle','general','detective','phantom','rebel']},
+    {label:'🏆 Hype & Sports — loud, fast, electric',ids:['goat','coach','commentator','queen','hype','viral','titan']},
+  ];
+  g.innerHTML=groups.map(grp=>`
+    <div style="grid-column:1/-1;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+      color:var(--dim);padding:10px 0 6px;border-bottom:1px solid var(--b1);margin-bottom:2px">${grp.label}</div>
+    ${grp.ids.map(id=>{
+      const v=VOICES.find(x=>x.id===id);if(!v)return'';
+      return`<div class="vc ${S.selVoice?.id===v.id?'sel':''}" id="vc-${v.id}" onclick="selV('${v.id}')">
+        <button class="vc-pbtn" id="vcp-${v.id}" onclick="event.stopPropagation();prvV('${v.id}')">▶</button>
+        <div class="vc-top">
+          <div class="vc-ava" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)">${v.ava}</div>
+          <div><div class="vc-nm">${v.nm}</div><div class="vc-tp">${v.tp}</div></div>
+        </div>
+        <div class="vc-desc">${v.desc}</div>
+        <div class="vc-tags">${v.tags.map(t=>`<span class="vc-tag ${t}">${t.replace('vt-','').toUpperCase()}</span>`).join('')}</div>
+      </div>`;
+    }).join('')}
+  `).join('');
+  if(!S.selVoice){const m={religion:'storyteller',history:'dad',sports:'homie'};selV(m[S.niche]||'friend');}
+}
+function selV(id){
+  const v=VOICES.find(x=>x.id===id);if(!v)return;
+  S.selVoice=v;
+  document.querySelectorAll('.vc').forEach(c=>c.classList.remove('sel'));
+  const card=document.getElementById('vc-'+id);if(card)card.classList.add('sel');
+  document.getElementById('vb-ava').textContent=v.ava;
+  document.getElementById('vb-nm').textContent=v.nm+' — '+v.tp;
+  document.getElementById('vb-st').textContent=v.desc;
+  // sync sliders to voice defaults
+  const r=Math.round(v.rate*100),p=Math.round(v.pitch*100),vol=Math.round(v.vol*100);
+  document.getElementById('vs-rate').value=r;
+  document.getElementById('vs-pitch').value=p;
+  document.getElementById('vs-vol').value=vol;
+  updateSlider('vs-rate','vs-rate-v');
+  updateSlider('vs-pitch','vs-pitch-v');
+  updateSlider('vs-vol','vs-vol-v');
+}
+function updateSlider(sid,vid){
+  const el=document.getElementById(sid);
+  const val=el.value;
+  let disp=val;
+  if(sid==='vs-rate') disp=(val/100).toFixed(1)+'x';
+  else if(sid==='vs-pitch') disp=(val/100).toFixed(2);
+  else if(sid==='vs-vol') disp=val+'%';
+  document.getElementById(vid).textContent=disp;
+  const pct=((val-el.min)/(el.max-el.min)*100).toFixed(1);
+  el.style.background=`linear-gradient(90deg,var(--gold) ${pct}%,var(--b2) ${pct}%)`;
+}
+function prvV(id){
+  selV(id);
+  const v=VOICES.find(x=>x.id===id);if(!v)return;
+  const sample=S.generated?.script?.substring(0,250)||'They removed this from history and nobody talks about why. The truth they buried for centuries is finally coming to light.';
+  speakWith(sample,v);
+  document.querySelectorAll('.vc-pbtn').forEach(b=>{b.classList.remove('playing');b.textContent='▶';});
+  const pb=document.getElementById('vcp-'+id);if(pb){pb.classList.add('playing');pb.textContent='⏸';}
+}
+function previewV(){if(!S.selVoice){toast('Select a voice first','terr');return;}prvV(S.selVoice.id);}
+
+let utter=null;
+function speakWith(txt,voiceObj){
+  stopV();
+  utter=new SpeechSynthesisUtterance(txt);
+  utter.rate=parseFloat(document.getElementById('vs-rate').value)/100||voiceObj.rate;
+  utter.pitch=parseFloat(document.getElementById('vs-pitch').value)/100||voiceObj.pitch;
+  utter.volume=parseFloat(document.getElementById('vs-vol').value)/100||voiceObj.vol;
+  const voices=window.speechSynthesis.getVoices();
+  let cv=null;
+  if(voiceObj.pitch<.7){cv=voices.find(v=>v.name.includes('Daniel')||v.name.includes('David')||v.name.includes('Alex')||v.name.includes('Fred'))||null;}
+  else if(voiceObj.pitch>1.1){cv=voices.find(v=>v.name.includes('Samantha')||v.name.includes('Karen')||v.name.includes('Victoria')||v.name.includes('Moira')||v.name.includes('Tessa'))||null;}
+  if(!cv)cv=voices.find(v=>v.lang==='en-US')||voices.find(v=>v.lang.startsWith('en'))||null;
+  if(cv)utter.voice=cv;
+  utter.onstart=()=>{document.querySelectorAll('.vz').forEach(b=>b.classList.add('on'));};
+  utter.onend=utter.onerror=()=>{
+    document.querySelectorAll('.vz,.vc-pbtn').forEach(b=>{b.classList.remove('on','playing');});
+    document.querySelectorAll('.vc-pbtn').forEach(b=>b.textContent='▶');
+  };
+  window.speechSynthesis.speak(utter);
+}
+function stopV(){
+  window.speechSynthesis.cancel();
+  document.querySelectorAll('.vz').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.vc-pbtn').forEach(b=>{b.classList.remove('playing');b.textContent='▶';});
+}
+window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+
+// ══ VIDEO BUILDER ════════════════════════════════════════════════════════════
+const BGEMOJI={religion:['✝️','🕊️','📖','🌟','⛪','🙏','🌙','👼','🕍','📿'],history:['🏛️','⚔️','👑','🗡️','🏰','🦅','🔥','⚡','🗺️','🏺'],sports:['🏆','⚽','🏀','🎯','💪','🥊','🏃','🌟','🥇','🎽']};
+
+function renderVideo(){
+  const g=S.generated;
+  const sl=document.getElementById('scene-list');
+  if(!g?.script){sl.innerHTML='<div class="empty">Generate a script first ✍️</div>';return;}
+  const sentences=g.script.match(/[^.!?]+[.!?]+/g)||g.script.split('\n').filter(l=>l.trim().length>5);
+  S.scenes=sentences.filter(s=>s.trim().length>6).map((s,i)=>({
+    id:i+1,txt:s.trim(),
+    vis:(BGEMOJI[g.niche]||BGEMOJI.history)[i%(BGEMOJI[g.niche]||BGEMOJI.history).length]
+  }));
+  S.curScene=0;
+  sl.innerHTML=S.scenes.map((sc,i)=>`
+    <div class="scene ${i===0?'act':''}" id="sc-${i}" onclick="jumpSc(${i})">
+      <div class="sc-num">${sc.id}</div>
+      <div class="sc-info"><div class="sc-lbl">Scene ${sc.id}</div><div class="sc-txt">${sc.txt}</div></div>
+      <div class="sc-vis" id="scv-${i}">${sc.vis}</div>
+    </div>`).join('');
+  document.getElementById('capcut-s').textContent=g.script;
+  updPhone();
+}
+function updPhone(){
+  const sc=S.scenes[S.curScene];if(!sc)return;
+  document.getElementById('ph-bg').textContent=sc.vis;
+  const capTxt=sc.txt.length>70?sc.txt.substring(0,70)+'...':sc.txt;
+  document.getElementById('ph-cap').textContent=capTxt;
+  document.getElementById('ph-badge').textContent='Scene '+sc.id+' of '+S.scenes.length;
+  document.getElementById('ph-count').textContent=(S.curScene+1)+' / '+S.scenes.length;
+  document.getElementById('ph-prog').style.width=(((S.curScene+1)/S.scenes.length)*100)+'%';
+  document.querySelectorAll('.scene').forEach((el,i)=>el.classList.toggle('act',i===S.curScene));
+}
+function jumpSc(i){S.curScene=i;updPhone();}
+function nextSc(){if(S.curScene<S.scenes.length-1){S.curScene++;updPhone();}}
+function prevSc(){if(S.curScene>0){S.curScene--;updPhone();}}
+function playFull(){
+  if(!S.generated?.script){toast('Generate a script first','terr');return;}
+  const v=S.selVoice||VOICES[0];
+  speakWith(S.generated.script,v);
+  toast('Playing with '+v.nm,'tinfo');
+}
+function usePexels(emoji,label){
+  if(S.scenes[S.curScene]){
+    S.scenes[S.curScene].vis=emoji;
+    const scv=document.getElementById('scv-'+S.curScene);
+    if(scv)scv.textContent=emoji;
+    updPhone();
+    toast('Visual set: '+label,'tok');
+  }
+}
+function searchPexels(){
+  const q=document.getElementById('pex-q').value.trim();
+  if(!q)return;
+  // Map keywords to relevant emojis since we can't call Pexels API without a key
+  const emojiMap={
+    'ancient ruins':'🏛️','ruins':'🏛️','temple':'⛩️','church':'⛪','cathedral':'⛪',
+    'battle':'⚔️','war':'⚔️','sword':'🗡️','army':'🛡️',
+    'basketball':'🏀','football':'🏈','soccer':'⚽','running':'🏃','boxing':'🥊',
+    'bible':'📖','cross':'✝️','pray':'🙏','angel':'👼','heaven':'☁️',
+    'night sky':'🌌','stars':'⭐','moon':'🌙','fire':'🔥','lightning':'⚡',
+    'king':'👑','queen':'👸','crown':'👑','castle':'🏰','throne':'🪑',
+    'trophy':'🏆','medal':'🥇','victory':'✌️','champion':'🏅',
+    'scroll':'📜','book':'📚','map':'🗺️','gold':'💰','treasure':'💎',
+  };
+  const results=[];
+  const qLow=q.toLowerCase();
+  for(const[k,e]of Object.entries(emojiMap)){if(k.includes(qLow)||qLow.includes(k))results.push({e,l:k});}
+  if(results.length===0){
+    const fallback=[['🎬','Video'],['📸','Photo'],['🌄','Landscape'],['🎭','Drama'],['✨','Epic'],['🔮','Mystery']];
+    fallback.forEach(([e,l])=>results.push({e,l}));
+  }
+  const pr=document.getElementById('pex-results');
+  pr.innerHTML=results.slice(0,6).map(({e,l})=>`
+    <div class="pex-thumb" onclick="usePexels('${e}','${l}')">
+      <div>${e}</div><div class="pex-lbl">${l}</div>
+    </div>`).join('');
+  toast('Showing free visuals for: '+q,'tinfo');
+}
+function addToQ(){
+  if(!S.generated?.script){toast('Generate a script first','terr');return;}
+  const item={
+    id:Date.now(),niche:S.generated.niche||S.niche,
+    topic:S.generated.topic||'Untitled',
+    title:(S.generated.titles||'').split('\n')[0].replace(/^\d+\.\s*/,'').trim()||S.generated.topic,
+    script:S.generated.script,titles:S.generated.titles||'',
+    captions:S.generated.captions||'',hashtags:S.generated.hashtags||'',
+    description:S.generated.description||'',
+    plats:{...S.generated.plats},voice:S.selVoice?.nm||'Default',
+    scheduled:false,schedTime:'',
+    dayOffset:S.queue.length+1
+  };
+  S.queue.push(item);
+  setFlow(3,'done','✓ Built');setFlow(4,'curr','→ Captions');setFlow(5,'','Waiting');
+  updDash();updBadge();
+  toast('Added to queue! 🚀','tok');
+  go('captions');
+}
+
+// ══ CAPTION EDITOR ══════════════════════════════════════════════════════════
+function renderCaps(){
+  const g=S.generated;
+  if(!g)return;
+  const titleLine=(g.titles||'').split('\n')[0].replace(/^\d+\.\s*/,'').trim();
+  const capLines=(g.captions||'').split('\n').filter(l=>l.trim());
+  document.getElementById('cap-yt-title').value=titleLine.substring(0,60)||'';
+  document.getElementById('cap-yt-desc').value=g.description||'';
+  document.getElementById('cap-yt-tags').value=(g.hashtags||'').replace(/#/g,'').replace(/\s+/g,', ').substring(0,300)||'';
+  const ttCap=titleLine+(capLines.length?'\n\n'+capLines.slice(0,3).map(l=>l.replace(/^\d+\.\s*/,'')).join(' '):'');
+  document.getElementById('cap-tt-cap').value=ttCap;
+  document.getElementById('cap-tt-tags').value=g.hashtags||'';
+  document.getElementById('cap-ig-cap').value=capLines.slice(0,6).map(l=>l.replace(/^\d+\.\s*/,'')).join('\n')||'';
+  document.getElementById('cap-ig-tags').value=g.hashtags||'';
+  const el=document.getElementById('cap-yt-title');
+  if(el)capCC(el,'yt-count',60,'yt-title-cc');
+}
+function capCC(el,countId,max,ccId){
+  const len=el.value.length;
+  const cc=document.getElementById(ccId);
+  if(cc){cc.textContent=len+'/'+max;cc.className='cc'+(len>max?' over':len>max*.85?' warn':'');}
+  const ct=document.getElementById(countId);
+  if(ct)ct.textContent=len+'/'+max+' chars';
+}
+function autoFillCaps(){renderCaps();setFlow(4,'done','✓ Done');setFlow(5,'curr','→ Schedule');toast('All fields filled from your script ⚡','tok');}
+function copyAllYT(){
+  const t=document.getElementById('cap-yt-title').value;
+  const d=document.getElementById('cap-yt-desc').value;
+  const tags=document.getElementById('cap-yt-tags').value;
+  navigator.clipboard.writeText(`TITLE:\n${t}\n\nDESCRIPTION:\n${d}\n\nTAGS:\n${tags}`).then(()=>toast('YouTube content copied!','tok'));
+}
+function copyAllTT(){
+  const c=document.getElementById('cap-tt-cap').value;
+  const t=document.getElementById('cap-tt-tags').value;
+  navigator.clipboard.writeText(`${c}\n\n${t}`).then(()=>toast('TikTok content copied!','tok'));
+}
+function copyAllIG(){
+  const c=document.getElementById('cap-ig-cap').value;
+  const t=document.getElementById('cap-ig-tags').value;
+  navigator.clipboard.writeText(`${c}\n\n.\n.\n.\n${t}`).then(()=>toast('Instagram content copied!','tok'));
+}
+
+// ══ SCHEDULER ════════════════════════════════════════════════════════════════
+function defTime(off=0){
+  const d=new Date();
+  d.setDate(d.getDate()+Math.max(1,off));
+  d.setHours(16,0,0,0);
+  return d.toISOString().slice(0,16);
+}
+function renderSched(){
+  const list=document.getElementById('sched-list');
+  updSchedStats();
+  if(!S.queue.length){list.innerHTML='<div class="empty">No videos queued yet. Generate content and add it to the queue! ✍️</div>';return;}
+  const icons={religion:'✝️',history:'🏛️',sports:'🏆'};
+  const pi={yt:{n:'▶ YouTube',c:'sp-yt',sc:'sl-yt',url:'https://studio.youtube.com'},tt:{n:'♪ TikTok',c:'sp-tt',sc:'sl-tt',url:'https://www.tiktok.com/studio'},ig:{n:'◈ Instagram',c:'sp-ig',sc:'sl-ig',url:'https://business.facebook.com'}};
+  list.innerHTML=S.queue.map((item,idx)=>`
+    <div class="si ${item.scheduled?'done':''}" id="si-${item.id}">
+      <div class="si-top">
+        <div class="si-ico" style="background:${item.niche==='religion'?'rgba(240,180,41,.12)':item.niche==='history'?'rgba(255,51,85,.1)':'rgba(16,224,154,.1)'}">${icons[item.niche]||'📹'}</div>
+        <div class="si-nfo"><h4>${item.title}</h4><p>${item.niche} · ${item.voice}</p></div>
+        <button class="si-del" onclick="rmQ(${item.id})">✕ Remove</button>
+      </div>
+      <div class="si-plats">${Object.entries(item.plats).filter(([,v])=>v).map(([k])=>`<span class="sp ${pi[k].c}">${pi[k].n}</span>`).join('')}</div>
+      <div class="si-row">
+        <input class="si-time" type="datetime-local" id="st-${item.id}" value="${item.schedTime||defTime(item.dayOffset||1)}"/>
+        <button class="btn ${item.scheduled?'bv':'bg'} bsm" onclick="schedItem(${item.id})">${item.scheduled?'✓ Scheduled':'Schedule'}</button>
+      </div>
+      <div class="si-links">
+        ${Object.entries(item.plats).filter(([,v])=>v).map(([k])=>`<a class="sl ${pi[k].sc}" href="${pi[k].url}" target="_blank">${pi[k].n} →</a>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function schedItem(id){
+  const item=S.queue.find(i=>i.id===id);if(!item)return;
+  item.schedTime=document.getElementById('st-'+id)?.value||defTime();
+  item.scheduled=true;
+  setFlow(5,'done','✓ Scheduled');
+  updSchedStats();renderSched();updDash();
+  const d=new Date(item.schedTime);
+  toast(`Scheduled for ${d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} 4pm ✓`,'tok');
+}
+function rmQ(id){
+  S.queue=S.queue.filter(i=>i.id!==id);
+  updSchedStats();renderSched();updDash();updBadge();toast('Removed');
+}
+function updSchedStats(){
+  const sc=S.queue.filter(i=>i.scheduled).length;
+  const pt=S.queue.filter(i=>i.scheduled).reduce((a,i)=>a+Object.entries(i.plats).filter(([,v])=>v).length,0);
+  document.getElementById('ss-q').textContent=S.queue.length;
+  document.getElementById('ss-sc').textContent=sc;
+  document.getElementById('ss-pt').textContent=pt;
+}
+
+// ══ DASHBOARD ════════════════════════════════════════════════════════════════
+function renderDash(){
+  updDash();
+  const list=document.getElementById('dash-q-list');
+  document.getElementById('dq-c').textContent=S.queue.length+' video'+(S.queue.length!==1?'s':'');
+  if(!S.queue.length){list.innerHTML='<div class="empty">Nothing yet — go to Script Generator to create your first video ⚡</div>';return;}
+  const icons={religion:'✝️',history:'🏛️',sports:'🏆'};
+  list.innerHTML=S.queue.map(item=>`
+    <div class="qi">
+      <div class="qi-n" style="background:${item.niche==='religion'?'rgba(240,180,41,.12)':item.niche==='history'?'rgba(255,51,85,.1)':'rgba(16,224,154,.1)'}">${icons[item.niche]||'📹'}</div>
+      <div class="qi-i"><div class="qi-t">${item.title}</div><div class="qi-m">${item.niche} · ${item.scheduled?'✅ Scheduled':'⏳ Pending'}</div></div>
+      <div class="qi-a">
+        <button class="qa" onclick="editQ(${item.id})">Edit</button>
+        <button class="qa del" onclick="rmQ(${item.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+function updDash(){
+  const sc=S.queue.filter(i=>i.scheduled).length;
+  const pt=S.queue.filter(i=>i.scheduled).reduce((a,i)=>a+Object.entries(i.plats).filter(([,v])=>v).length,0);
+  document.getElementById('d-gen').textContent=S.totalGen;
+  document.getElementById('d-q').textContent=S.queue.length;
+  document.getElementById('d-sc').textContent=sc;
+  document.getElementById('d-pt').textContent=pt;
+}
+function updBadge(){
+  const n=S.queue.length;
+  document.getElementById('q-badge').textContent=n;
+  document.getElementById('tb-q').textContent=n+' in queue';
+}
+function setFlow(step,type,txt){
+  const df=document.getElementById('df'+step);
+  const dfs=document.getElementById('dfs'+step);
+  if(!df||!dfs)return;
+  dfs.className='df-s'+(type==='done'?' sv':type==='curr'?' sg':'');
+  dfs.textContent=txt;
+  df.className='df'+(type==='done'?' done':type==='curr'?' curr':'');
+}
+function editQ(id){
+  const item=S.queue.find(i=>i.id===id);if(!item)return;
+  S.generated={...item};
+  go('gen');
+  // restore UI after nav
+  setTimeout(()=>{
+    document.getElementById('g-topic').value=item.topic||'';
+    if(item.script){
+      showOut('ob-script','ob-script-t',item.script);
+      showOut('ob-titles','ob-titles-t',item.titles||'');
+      showOut('ob-caps','ob-caps-t',item.captions||'');
+      showOut('ob-tags','ob-tags-t',item.hashtags||'');
+      showOut('ob-desc','ob-desc-t',item.description||'');
+      document.getElementById('capcut-s').textContent=item.script;
+      document.getElementById('to-voice-btn').style.display='flex';
+    }
+    // restore niche pill
+    document.querySelectorAll('[data-n]').forEach(p=>{p.className='pill'});
+    const nc={religion:'pill-g',history:'pill-b',sports:'pill-v'};
+    const np=document.querySelector(`[data-n="${item.niche}"]`);
+    if(np)np.className='pill '+(nc[item.niche]||'pill-g');
+    S.niche=item.niche||'religion';
+    toast('Loaded for editing ✂️','tinfo');
+  },50);
+}
+
+// ══ TOAST ════════════════════════════════════════════════════════════════════
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast on'+(type?' '+type:'');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.className='toast',3200);
+}
+</script>
+</body>
+</html>
